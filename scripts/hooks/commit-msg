@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# Reference
+# https://www.conventionalcommits.org/en/v1.0.0/
+
+types="build|docs|feat|fix|perf|refactor|style|test|chore"
+
+# this should cover what we need
+regexp="^([Rr]evert|[Mm]erge):? .+$|^($types)(\(.+\))?: .+"
+
+# get the first line of the commit message
+INPUT_FILE=$1
+commit_message=$(head -n1 ${INPUT_FILE})
+
+# explanation of how a commit message should be structured
+print_error() {
+  echo -e "\n\e[31m[Invalid commit message]"
+  echo -e "------------------------\033[0m\e[0m"
+  echo -e "Valid types: \e[36m$types\033[0m"
+  echo -e "\e[37mActual commit message: \e[33m\"$commit_message\"\033[0m"
+  echo -e "\e[37mExample of valid commit message: \e[36m\"fix(subject): message\", \"feat: message\"\033[0m"
+  echo -e "\e[37mRegex: \e[33m\"$regexp\"\033[0m"
+}
+
+if [[ ! $commit_message =~ $regexp ]]; then
+  # commit message is invalid - block commit
+  print_error
+  exit 1
+fi

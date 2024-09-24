@@ -1,0 +1,93 @@
+x-common-variables: &common-variables
+  MYSQL_HOST: 127.0.0.1
+  MYSQL_PORT: 3306
+  MYSQL_DATABASE: laraveldb
+  MYSQL_ROOT_USER: root
+  MYSQL_ROOT_PASSWORD: secret
+  MYSQL_USER: laravel
+  MYSQL_PASSWORD: secret
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./docker/nginx.Dockerfile
+    depends_on:
+      php:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+    container_name: genai_nginx
+    restart: always
+    ports:
+      - 8000:80
+      - 4000:8080
+    healthcheck:
+      test: service nginx status || exit 1
+      start_period: 5s
+      interval: 1m
+      timeout: 5s
+      retries: 20
+    volumes:
+      - ./src:/var/www/html
+      - ./nginx-logs:/var/log/nginx:rw
+      - ./docker/nginx-conf:/etc/nginx/conf.d:ro
+      - ./phpmyadmin:/usr/share/phpMyAdmin:rw
+
+  php:
+    build:
+      context: .
+      dockerfile: ./docker/php.Dockerfile
+    container_name: genai_php
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./src:/var/www/html
+
+  mysql:
+    image: mysql:8.0
+    platform: linux/amd64
+    container_name: genai_mysql
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_ROOT_USER --password=$$MYSQL_ROOT_PASSWORD
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: $$MYSQL_DATABASE
+      MYSQL_USER: $$MYSQL_USER
+      MYSQL_PASSWORD: $$MYSQL_PASSWORD
+      MYSQL_ROOT_PASSWORD: $$MYSQL_ROOT_PASSWORD
+
+  composer:
+    image: composer:latest
+    container_name: genai_composer
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+
+  artisan:
+    build:
+      context: .
+      dockerfile: ./docker/php.Dockerfile
+    container_name: genai_artisan
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    entrypoint: ['php', 'artisan']
+
+  frontend:
+    build: ../reactjs_fe_genai_plgrnd
+    container_name: genai_frontend
+    depends_on:
+      php:
+        condition: service_started
+    ports:
+      - 3000:3000
+    restart: always
