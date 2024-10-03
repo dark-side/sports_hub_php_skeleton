@@ -1,3 +1,3 @@
-FROM nginx:stable-alpine
+FROM nginx:stable
 
 RUN mkdir -p /var/www/html
