@@ -44,6 +44,7 @@ services:
         condition: service_healthy
     volumes:
       - ./src:/var/www/html
+      - ./phpmyadmin:/usr/share/phpMyAdmin:rw
 
   mysql:
     image: mysql:8.0
