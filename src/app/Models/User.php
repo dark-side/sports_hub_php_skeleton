@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -13,14 +12,14 @@ class User extends Authenticatable implements JWTSubject
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are assignable.
      *
      * @var array
      */
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'encrypted_password',
     ];
 
     /**
@@ -29,7 +28,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'password',
+        'encrypted_password',
     ];
 
     /**
@@ -40,7 +39,7 @@ class User extends Authenticatable implements JWTSubject
     protected function casts(): array
     {
         return [
-            'password' => 'hashed',
+            'encrypted_password' => 'hashed',
         ];
     }
 
@@ -53,4 +52,36 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    /**
+     * Set the user's password.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['encrypted_password'] = bcrypt($value);
+    }
+
+    /*
+     The next three methods are alternatives acting similarly.
+     The idea is to override the default behavior of the Authenticatable class
+     where the "password" key is expected
+    */
+    public function getAuthPassword()
+    {
+        return $this->attributes['encrypted_password'];
+    }
+    /*
+    public function getPasswordAttribute()
+    {
+        return $this->attributes['encrypted_password'];
+    }
+
+    public function getAuthPasswordName()
+    {
+        return 'encrypted_password';
+    }
+    */
 }
