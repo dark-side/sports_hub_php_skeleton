@@ -15,11 +15,10 @@ return new class extends Migration
             $table->id();
             $table->integer('likes')->nullable();
             $table->integer('dislikes')->nullable();
-            $table->string('likeable_type', 255);
-            $table->unsignedBigInteger('likeable_id');
             $table->timestamps();
-            $table->foreign('likeable_id')->references('id')->on('articles')->onDelete('cascade');
-            $table->index(['likeable_type', 'likeable_id'], 'index_likes_on_likeable');
+            $table->unsignedBigInteger('article_id');
+            $table->foreign('article_id')->references('id')->on('articles')->onDelete('cascade');
+            $table->index(['article_id'], 'index_likes_on_article_id');
         });
     }
 

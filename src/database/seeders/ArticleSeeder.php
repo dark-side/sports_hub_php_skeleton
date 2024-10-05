@@ -48,11 +48,12 @@ class ArticleSeeder extends Seeder
             }
 
             // Create likes using factory
-            $like = Like::factory()->create([
-                'likeable_id' => $article->id
+            Like::factory()->create([
+                'article_id' => $article->id,
+                'likes' => rand(0, 100),
+                'dislikes' => rand(0, 100),
             ]);
 
-            $article->like()->save($like);
             $article->save();
         }
     }

@@ -4,21 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Article extends Model
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     /**
-     * Get the like associated with the article.
+     * The attributes that are assignable.
+     *
+     * @var array
      */
-    public function like()
-    {
-        return $this->morphOne(Like::class, 'likeable');
-    }
-
-    public function comments()
-    {
-        return $this->morphMany(Comment::class, 'article');
-    }
+    protected $fillable = [
+        'title',
+        'short_description',
+        'description',
+    ];
 }

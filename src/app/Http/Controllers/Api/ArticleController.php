@@ -6,15 +6,11 @@ use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use App\Http\Controllers\Controller as Controller;
+use App\Http\Requests\ArticleCreateRequest;
+use App\Http\Requests\ArticleUpdateRequest;
 
 class ArticleController extends Controller
 {
-    const VALIDATION_RULES = [
-        'title' => 'required|string|max:255',
-        'short_description' => 'required|string',
-        'description' => 'required|string',
-    ];
-
     /**
      * Display a listing of the resource.
      */
@@ -22,23 +18,15 @@ class ArticleController extends Controller
     {
         $articles = Article::all();
 
-        return Response::json($articles);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return response()->json($articles);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ArticleCreateRequest $request)
     {
-        $validatedData = $request->validate(self::VALIDATION_RULES);
+        $validatedData = $request->validated();
 
         $article = Article::create($validatedData);
 
@@ -48,29 +36,21 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Article $article)
+    public function get(Article $article)
     {
-        return Response::json($article);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Article $article)
-    {
-        //
+        return response()->json($article);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Article $article)
+    public function update(ArticleUpdateRequest $request, Article $article)
     {
-        $validatedData = $request->validate(self::VALIDATION_RULES);
+        $validatedData = $request->validated();
 
         $article->update($validatedData);
 
-        return response()->json($article, 200);
+        return response()->json($article);
     }
 
     /**
@@ -80,6 +60,6 @@ class ArticleController extends Controller
     {
         $article->delete();
 
-        return response()->json(['message' => 'Article deleted successfully'], 200);
+        return response()->json(['message' => 'Article deleted successfully']);
     }
 }

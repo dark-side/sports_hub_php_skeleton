@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -20,6 +21,9 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'encrypted_password',
+        // since the mapping to "encrypted_password" is used
+        // "password" field is still needed among fillables so it can be assigned a value
+        'password'
     ];
 
     /**
@@ -38,9 +42,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected function casts(): array
     {
-        return [
-            'encrypted_password' => 'hashed',
-        ];
+        return [];
     }
 
     public function getJWTIdentifier()
@@ -54,14 +56,14 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Set the user's password.
+     * Setter for password field.
      *
      * @param  string  $value
      * @return void
      */
     public function setPasswordAttribute($value)
     {
-        $this->attributes['encrypted_password'] = bcrypt($value);
+        $this->attributes['encrypted_password'] = Hash::make($value);
     }
 
     /*
@@ -73,6 +75,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->attributes['encrypted_password'];
     }
+
     /*
     public function getPasswordAttribute()
     {
@@ -83,5 +86,5 @@ class User extends Authenticatable implements JWTSubject
     {
         return 'encrypted_password';
     }
-    */
+        */
 }

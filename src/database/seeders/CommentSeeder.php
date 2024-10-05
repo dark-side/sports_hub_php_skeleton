@@ -31,30 +31,34 @@ class CommentSeeder extends Seeder
 
         // Add one comment to each article
         foreach ($articles as $index => $article) {
-            $article->comments()->create([
-                'content' => $comments[$index % count($comments)]
+            Comment::factory()->create([
+                'article_id' => $article->id,
+                'content' => $comments[$index % count($comments)],
             ]);
         }
 
         // Add additional random comments to random articles
         for ($i = 0; $i < 5; $i++) {
             $article = $articles->random();
-            $article->comments()->create([
-                'content' => $comments[array_rand($comments)]
+            Comment::factory()->create([
+                'article_id' => $article->id,
+                'content' => $comments[array_rand($comments)],
             ]);
         }
 
         for ($i = 0; $i < 4; $i++) {
             $article = $articles->random();
-            $article->comments()->create([
-                'content' => $comments[array_rand($comments)]
+            Comment::factory()->create([
+                'article_id' => $article->id,
+                'content' => $comments[array_rand($comments)],
             ]);
         }
 
         for ($i = 0; $i < 6; $i++) {
             $article = $articles->random();
-            $article->comments()->create([
-                'content' => $comments[array_rand($comments)]
+            Comment::factory()->create([
+                'article_id' => $article->id,
+                'content' => $comments[array_rand($comments)],
             ]);
         }
     }
