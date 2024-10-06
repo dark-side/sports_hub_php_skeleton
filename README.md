@@ -1,4 +1,4 @@
-## Environment Setup for Laravel (PHP, Nginx, Laravel, MySql, PHPMyAdmin) uising Docker
+## Environment Setup for Laravel (PHP, Nginx, Laravel, MySql, phpMyAdmin) using Docker
 
 ### Project Structure
 

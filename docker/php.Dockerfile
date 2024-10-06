@@ -18,23 +18,23 @@ RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -s /bin/sh -D lara
 #    rm -rf /var/lib/apt/lists/* && \
 # Install PHP Extensions
 #    docker-php-ext-install bz2 mbstring mysqli zip && \
-    mkdir -p ${PHPMYADMIN_PATH} && \
-    cd ${PHPMYADMIN_PATH} && \
-# Download and extract phpMyAdmin
-    curl https://files.phpmyadmin.net/phpMyAdmin/${PHPMYADMIN_VERSION}/phpMyAdmin-${PHPMYADMIN_VERSION}-all-languages.tar.gz | tar --extract --gunzip --file - --strip-components 1 && \
-    rm -rf examples && \
-    rm -rf setup && \
-    rm -rf sql
-
-#RUN \
 #    mkdir -p ${PHPMYADMIN_PATH} && \
 #    cd ${PHPMYADMIN_PATH} && \
-#    curl -sL https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.tar.gz -o phpMyAdmin-latest.tar.gz
-#    tar -xf phpMyAdmin-latest.tar.gz && rm phpMyAdmin-latest.tar.gz && \
-#    mv phpMyAdmin-*-all-languages/* ${PHPMYADMIN_PATH} && \
-#    rm -rf phpMyAdmin-*-all-languages && \
-#    cp ${PHPMYADMIN_PATH}/config.sample.inc.php ${PHPMYADMIN_PATH}/config.inc.php && \
-#    sed -i "s/localhost/${MYSQL_HOST}:${MYSQL_PORT}/g" ${PHPMYADMIN_PATH}/config.inc.php
+# Download and extract phpMyAdmin
+#    curl https://files.phpmyadmin.net/phpMyAdmin/${PHPMYADMIN_VERSION}/phpMyAdmin-${PHPMYADMIN_VERSION}-all-languages.tar.gz | tar --extract --gunzip --file - --strip-components 1 && \
+#    rm -rf examples && \
+#    rm -rf setup && \
+#    rm -rf sql
+
+RUN \
+    mkdir -p ${PHPMYADMIN_PATH} && \
+    cd ${PHPMYADMIN_PATH} && \
+    curl -sL https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.tar.gz -o phpMyAdmin-latest.tar.gz
+    tar -xf phpMyAdmin-latest.tar.gz && rm phpMyAdmin-latest.tar.gz && \
+    mv phpMyAdmin-*-all-languages/* ${PHPMYADMIN_PATH} && \
+    rm -rf phpMyAdmin-*-all-languages && \
+    cp ${PHPMYADMIN_PATH}/config.sample.inc.php ${PHPMYADMIN_PATH}/config.inc.php && \
+    sed -i "s/localhost/${MYSQL_HOST}:${MYSQL_PORT}/g" ${PHPMYADMIN_PATH}/config.inc.php
 
 
 RUN chmod -R 0766 ${PHPMYADMIN_PATH}
