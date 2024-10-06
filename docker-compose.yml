@@ -1,6 +1,6 @@
 x-db-variables: &db-variables
   environment:
-    MYSQL_HOST: 127.0.0.1
+    MYSQL_HOST: mysql
     MYSQL_PORT: 3306
     MYSQL_DATABASE: laraveldb
     MYSQL_ROOT_USER: root
@@ -37,7 +37,7 @@ services:
       - ./src:/var/www/html
       - ./nginx-logs:/var/log/nginx:rw
       - ./docker/nginx-conf:/etc/nginx/conf.d:ro
-      - ./phpmyadmin:/usr/share/phpMyAdmin:rw
+      - ./phpmyadmin:/usr/share/phpMyAdmin:ro
 
   php:
     build:
@@ -48,8 +48,9 @@ services:
       mysql:
         condition: service_healthy
     volumes:
-      - ./src:/var/www/html
+      - ./src:/var/www/html:rw
       - ./phpmyadmin:/usr/share/phpMyAdmin:rw
+    <<: *db-variables
 
   mysql:
     image: mysql:8.0

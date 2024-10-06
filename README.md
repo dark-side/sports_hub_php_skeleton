@@ -1,107 +1,86 @@
-## Environment Setup for Laravel (PHP, Nginx, Laravel, MySql) Using Docker
+## Environment Setup for Laravel (PHP, Nginx, Laravel, MySql, phpMyAdmin) using Docker
 
 ### Project Structure
 
 - `docker` - Folder for all configuration files for docker and other services
     - `nginx` - Folder for nginx configuration files
     - `php` - Folder for php configuration files
+- `docs` - Postman collections are there
 - `src` - Folder where the project code will be stored
+- `scripts` - Git hook supporting conventional commits and matching setup script
 - `docker-compose.yml` - Docker compose configuration file
+- `setenv.sh` - Script for creating .env file
 
 ### Step-by-Step Guide
 
-#### 1. Environment Setup
-
-- Remove empty files from src and mysql dirs.
-
-  ```
-  rm src/empty
-  rm mysql/empty
-  ```
-
-- In docker-compose.yml, change the data to access the database
-
-  ```
-  MYSQL_DATABASE: laraveldb
-  MYSQL_USER: laravel
-  MYSQL_PASSWORD: secret
-  MYSQL_ROOT_PASSWORD: secret
-  ```
-
-#### 2. Build the Project Using Docker Compose
+#### 1. Build the Project Using Docker Compose
 
 - Run this command
-  
   ```
   docker compose build
   ```
 
-#### 3. Create a Laravel Project
+#### 2. Setup project environment and dependencies
 
--  Run this command:
+- Run `setenv.sh` from the root folder to create .env file. should appear in `src` folder with updated database connection data.
 
+- Install Composer packages (`vendor` folder should appear in `src` folder):
   ```
-  docker compose run --rm composer create-project laravel/laravel .
+  docker compose run --rm composer install
   ```
-
-- After running this command, the project code should appear in the src folder.
-
-- Start docker containers
-
+- Setup conventional commits support, from the `scripts/hooks` folder run
   ```
-  docker compose up -d
+  setup.sh
   ```
 
-- You can verify if the project is working by opening the browser. For example, if it’s set to 80:
-
-  ```
-  http://localhost
-  ```
-
-#### 4. Configure Laravel project 
- 
-- Configure Mysql in /src/.env . Uncomment and change:
-
-  ```
-  DB_CONNECTION=mysql       # connection name, we use mysql
-  DB_HOST=mysql             # name of mysql service in docker-compose.yml
-  DB_PORT=3306              # mysql standart port 
-  DB_DATABASE=laraveldb     # database name from MYSQL_DATABASE in docker-compose.yml
-  DB_USERNAME=laravel       # username from MYSQL_USER in docker-compose.yml
-  DB_PASSWORD=secret        # user password from MYSQL_PASSWORD in docker-compose.yml
-  ```
-- Restart all services
-  
-  ```
-  docker compose down
-  docker compose up -d
-  ```
-
-#### 5. Run Migrations
-
+#### 3. Run migrations and seeders to add some exemplary data
   ```
   docker compose run --rm artisan migrate
   ```
+  ```
+  docker compose run --rm artisan db:seed
+  ```
+
+#### 4. Run the project
+- Start docker containers (`-d` for detached mode to unblock the terminal)
+  ```
+  docker compose up -d
+  ```
+  If you'd like to watch services logs running in the terminal, run without `-d`.
+
+- The project should be available by URL:
+
+  ```
+  http://localhost:3000/
+  ```
+
+#### Notes
+
+When services started it takes some time (about a minute) to pass health checks and become available.
+
+Folders `mysql`, `nginx-logs` and `phpmyadmin` appear after the first services start. They contain MySQL database files, web server logs and phpMyAdmin installation for convenience.
 
 #### Some useful commands
+- To stop services
+  ```
+  docker compose down
+  ```
 
-- Enter the php container (php is the name of the service from docker-compose.yml)
+- To build or start particular service
+  ```
+  docker compose build <service>
+  ```
+  ```
+  docker compose start <service>
+  ```
 
+- Enter the `php` container (`php` is the name of the service from docker-compose.yml)
   ```
   docker compose run --rm php /bin/sh
   ```
 
 - If access Forbidden
-
   ```
   docker compose run --rm php /bin/sh
   chown -R laravel:laravel /var/www/html
   ```
-
-### TODO
-1. Add initial migrations.
-2. Add endpoints.
-3. Add setup script to create:
-- nginx_logs
-- myadl
-- phpmyadmin.
