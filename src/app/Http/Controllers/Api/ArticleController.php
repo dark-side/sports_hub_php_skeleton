@@ -30,16 +30,22 @@ class ArticleController extends Controller
 
         // Transform the attachments collection to include only the 'url' field
         $articles->each(function ($article) {
-            $article->image_url = $article->attachment->url;
-            unset($article->attachment);
+            if (!empty($article->attachment)) {
+                $article->image_url = $article->attachment->url;
+                unset($article->attachment);
+            }
 
-            $article->article_likes = $article->reaction->likes;
-            $article->article_dislikes = $article->reaction->dislikes;
-            unset($article->reaction);
+            if (!empty($article->reaction)) {
+                $article->article_likes = $article->reaction->likes;
+                $article->article_dislikes = $article->reaction->dislikes;
+                unset($article->reaction);
+            }
 
-            $article->comments_content = $article->comments->pluck('content')->implode("\n");
-            $article->comments_count = $article->comments->count();
-            unset($article->comments);
+            if (!empty($article->comments)) {
+                $article->comments_content = $article->comments->pluck('content')->implode("\n");
+                $article->comments_count = $article->comments->count();
+                unset($article->comments);
+            }
         });
 
         //        render json: @articles.as_json(methods: [
@@ -84,16 +90,22 @@ class ArticleController extends Controller
 
         ])->findOrFail($article->id);
 
-        $article->image_url = $article->attachment->url;
-        unset($article->attachment);
+        if (!empty($article->attachment)) {
+            $article->image_url = $article->attachment->url;
+            unset($article->attachment);
+        }
 
-        $article->article_likes = $article->reaction->likes;
-        $article->article_dislikes = $article->reaction->dislikes;
-        unset($article->reaction);
+        if (!empty($article->reaction)) {
+            $article->article_likes = $article->reaction->likes;
+            $article->article_dislikes = $article->reaction->dislikes;
+            unset($article->reaction);
+        }
 
-        $article->comments_content = $article->comments->pluck('content')->implode("\n");
-        $article->comments_count = $article->comments->count();
-        unset($article->comments);
+        if (!empty($article->comments)) {
+            $article->comments_content = $article->comments->pluck('content')->implode("\n");
+            $article->comments_count = $article->comments->count();
+            unset($article->comments);
+        }
 
         return response()->json($article);
     }
