@@ -10,7 +10,8 @@ x-db-variables: &db-variables
 
 x-react-variables: &react-variables
   environment:
-    REACT_APP_BASE_BACKEND_URL: http://localhost:3002/api
+    REACT_APP_API_URL: http://localhost:3002/api
+    REACT_APP_ASSETS_URL: http://localhost:3002/assets
 
 services:
   nginx:

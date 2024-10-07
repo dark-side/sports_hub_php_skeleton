@@ -19,5 +19,21 @@ class Article extends Model
         'title',
         'short_description',
         'description',
+        'image_url'
     ];
+
+    public function attachment()
+    {
+        return $this->hasOne(Attachment::class);
+    }
+
+    public function reaction()
+    {
+        return $this->hasOne(Like::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

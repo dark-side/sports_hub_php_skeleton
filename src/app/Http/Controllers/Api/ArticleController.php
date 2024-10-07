@@ -16,7 +16,35 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $articles = Article::all();
+        $articles = Article::with([
+            'attachment' => function ($query) {
+                $query->select('id', 'article_id', 'url');
+            },
+            'reaction' => function ($query) {
+                $query->select('id', 'article_id', 'likes', 'dislikes');
+            },
+            'comments' => function ($query) {
+                $query->select('id', 'article_id', 'content');
+            },
+        ])->get();
+
+        // Transform the attachments collection to include only the 'url' field
+        $articles->each(function ($article) {
+            $article->image_url = $article->attachment->url;
+            unset($article->attachment);
+
+            $article->article_likes = $article->reaction->likes;
+            $article->article_dislikes = $article->reaction->dislikes;
+            unset($article->reaction);
+
+            $article->comments_content = $article->comments->pluck('content')->implode("\n");
+            $article->comments_count = $article->comments->count();
+            unset($article->comments);
+        });
+
+        //        render json: @articles.as_json(methods: [
+        //:image_url, :article_likes, :article_dislikes, :comments_content, :comments_count])
+
 
         return response()->json($articles);
     }
@@ -28,6 +56,10 @@ class ArticleController extends Controller
     {
         $validatedData = $request->validated();
 
+        $user = auth('api')->user();
+
+        $validatedData['author_id'] = $user->id;
+
         $article = Article::create($validatedData);
 
         return response()->json($article, 201);
@@ -38,6 +70,31 @@ class ArticleController extends Controller
      */
     public function get(Article $article)
     {
+        // Eager load the attachments relationship and select only the 'url' field
+        $article = Article::with([
+            'attachment' => function ($query) {
+                $query->select('id', 'article_id', 'url');
+            },
+            'reaction' => function ($query) {
+                $query->select('id', 'article_id', 'likes', 'dislikes');
+            },
+            'comments' => function ($query) {
+                $query->select('id', 'article_id', 'content');
+            },
+
+        ])->findOrFail($article->id);
+
+        $article->image_url = $article->attachment->url;
+        unset($article->attachment);
+
+        $article->article_likes = $article->reaction->likes;
+        $article->article_dislikes = $article->reaction->dislikes;
+        unset($article->reaction);
+
+        $article->comments_content = $article->comments->pluck('content')->implode("\n");
+        $article->comments_count = $article->comments->count();
+        unset($article->comments);
+
         return response()->json($article);
     }
 

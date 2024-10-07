@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Article;
 use App\Models\Like;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
 class ArticleSeeder extends Seeder
@@ -32,27 +33,17 @@ class ArticleSeeder extends Seeder
             "Explore the world of extreme sports and learn how to get started with this guide."
         ];
 
+        $users = User::all();
+
         foreach ($articlesTitles as $index => $title) {
             $article = Article::firstOrCreate(
                 ['title' => $title],
                 [
                     'short_description' => $articlesShortDescriptions[$index],
                     'description' => "This is the description of the article with title: $title",
+                    'author_id' => $users->random()->id,
                 ]
             );
-
-            // Attach image
-            $imagePath = storage_path("app/public/images/news_" . ($index + 1) . ".jpg");
-            if (file_exists($imagePath)) {
-                $article->addMedia($imagePath)->toMediaCollection('images');
-            }
-
-            // Create likes using factory
-            Like::factory()->create([
-                'article_id' => $article->id,
-                'likes' => rand(0, 100),
-                'dislikes' => rand(0, 100),
-            ]);
 
             $article->save();
         }
