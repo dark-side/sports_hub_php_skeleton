@@ -97,3 +97,17 @@ Folders `mysql`, `nginx-logs` and `phpmyadmin` appear after the first services s
   ```
   docker compose run --rm artisan migrate:fresh
   ```
+
+- To run tests
+  ```
+  docker compose run --rm artisan test
+  ```
+  Unit tests only
+  ```
+  docker compose run --rm artisan test --testsuite=Unit
+  ```
+
+- To delete local branches that are missing on remote and no longer needed, from `scripts` folder run
+  ```
+  pruneBranches.sh
+  ```
