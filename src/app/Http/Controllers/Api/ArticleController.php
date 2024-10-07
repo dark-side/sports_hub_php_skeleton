@@ -42,10 +42,6 @@ class ArticleController extends Controller
             unset($article->comments);
         });
 
-        //        render json: @articles.as_json(methods: [
-        //:image_url, :article_likes, :article_dislikes, :comments_content, :comments_count])
-
-
         return response()->json($articles);
     }
 
