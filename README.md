@@ -15,7 +15,7 @@
 
 #### 1. Build the Project Using Docker Compose
 
-- Run this command
+- Run this command in the root folder of the project
   ```
   docker compose build
   ```
@@ -28,13 +28,21 @@
   ```
   docker compose run --rm composer install
   ```
-- Setup conventional commits support, from the `scripts/hooks` folder run
+- Optionally setup conventional commits support, from the `scripts/hooks` folder run
   ```
   setup.sh
   ```
 
-#### 3. Run migrations and seeders to add some exemplary data
+#### 3. Spin up the services
+- Start docker containers (`-d` for detached mode to unblock the terminal)
+  ```
+  docker compose up -d
+  ```
+  If you'd like to watch services logs running in the terminal, run without `-d`.
 
+#### 4. Run migrations and seeders to add some exemplary data
+
+From the root folder of the project run
   ```
   docker compose run --rm artisan migrate
   ```
@@ -47,15 +55,9 @@ Whenever you want to start database tables over (drop and migrate), run this com
   docker compose run --rm artisan migrate:fresh
   ```
 
-#### 4. Run the project
-- Start docker containers (`-d` for detached mode to unblock the terminal)
-  ```
-  docker compose up -d
-  ```
-  If you'd like to watch services logs running in the terminal, run without `-d`.
+### 5. Check the app in browser
 
-- The project should be available by URL:
-
+The project should be available by URL:
   ```
   http://localhost:3000/
   ```
