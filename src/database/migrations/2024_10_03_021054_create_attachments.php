@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('active_storage_blobs', function (Blueprint $table) {
+        Schema::create('attachments', function (Blueprint $table) {
             $table->id();
-            $table->string('key')->unique();
             $table->string('filename');
             $table->string('content_type')->nullable();
             $table->text('metadata')->nullable();
-            $table->string('service_name');
+            $table->string('url');
             $table->unsignedBigInteger('byte_size');
-            $table->string('checksum')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('article_id');
             $table->timestamps();
-
-            $table->index('key', 'index_active_storage_blobs_on_key');
+            $table->foreign('article_id')->references('id')->on('articles')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('active_storage_blobs');
+        Schema::dropIfExists('attachments');
     }
 };
