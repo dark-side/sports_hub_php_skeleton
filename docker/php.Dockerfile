@@ -29,7 +29,7 @@ RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -s /bin/sh -D lara
 RUN \
     mkdir -p ${PHPMYADMIN_PATH} && \
     cd ${PHPMYADMIN_PATH} && \
-    curl -sL https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.tar.gz -o phpMyAdmin-latest.tar.gz
+    curl -sL https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.tar.gz -o phpMyAdmin-latest.tar.gz && \
     tar -xf phpMyAdmin-latest.tar.gz && rm phpMyAdmin-latest.tar.gz && \
     mv phpMyAdmin-*-all-languages/* ${PHPMYADMIN_PATH} && \
     rm -rf phpMyAdmin-*-all-languages && \

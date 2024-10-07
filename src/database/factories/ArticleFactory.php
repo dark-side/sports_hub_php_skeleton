@@ -25,6 +25,7 @@ class ArticleFactory extends Factory
             'title' => $this->faker->sentence,
             'short_description' => $this->faker->sentence,
             'description' => $this->faker->paragraphs(3, true),
+            'author_id' => \App\Models\User::factory(),
             'created_at' => now(),
             'updated_at' => now(),
         ];

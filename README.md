@@ -41,6 +41,11 @@
   docker compose run --rm artisan db:seed
   ```
 
+Whenever you want to start database tables over (drop and migrate), run this command and seed data afterwards.
+  ```
+  docker compose run --rm artisan migrate:fresh
+  ```
+
 #### 4. Run the project
 - Start docker containers (`-d` for detached mode to unblock the terminal)
   ```
@@ -83,4 +88,8 @@ Folders `mysql`, `nginx-logs` and `phpmyadmin` appear after the first services s
   ```
   docker compose run --rm php /bin/sh
   chown -R laravel:laravel /var/www/html
+  ```
+- To start database tables over (drop and migrate)
+  ```
+  docker compose run --rm artisan migrate:fresh
   ```
