@@ -87,7 +87,7 @@ services:
     entrypoint: ['php', 'artisan']
 
   frontend:
-    build: ../reactjs_fe_genai_plgrnd
+    build: ../sports_hub_react_skeleton
     container_name: genai_frontend
     depends_on:
       php:
