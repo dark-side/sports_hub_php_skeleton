@@ -52,7 +52,7 @@ git clone git@github.com:dark-side/sports_hub_react_skeleton.git
 
 #### 3. Setup project environment and dependencies
 
-- Run `setenv.sh` from the root folder to create .env file. should appear in `src` folder with updated database connection data.
+- Run `setenv.sh` (`setenv_mac.sh` on Mac) from the root folder to create .env file. should appear in `src` folder with updated database connection data.
 
 - Install Composer packages (`vendor` folder should appear in `src` folder):
   ```
