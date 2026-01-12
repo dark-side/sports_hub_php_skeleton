@@ -12,6 +12,10 @@ use App\Http\Requests\UserUpdateRequest;
 
 class AuthController extends Controller
 {
+    /**
+     * User registration
+     * POST /users/registrations
+     */
     public function signup(UserSignupRequest $request)
     {
         $validatedData = $request->validated();
@@ -22,11 +26,17 @@ class AuthController extends Controller
             'password' => $validatedData['password'],
         ]);
 
-        $token = auth('api')->login($user);
-
-        return $this->respondWithToken($token, 201);
+        // Return user without token for registration (as per spec)
+        return response()->json([
+            'id' => $user->id,
+            'email' => $user->email,
+        ], 201);
     }
 
+    /**
+     * User sign in
+     * POST /api/auth/sign_in
+     */
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
@@ -36,12 +46,22 @@ class AuthController extends Controller
                 return response()->json(['error' => 'Invalid credentials'], 401);
             }
 
-            return $this->respondWithToken($token);
+            $user = auth('api')->user();
+            
+            return response()->json([
+                'id' => $user->id,
+                'email' => $user->email,
+                'authentication_token' => $token
+            ]);
         } catch (JWTException $e) {
             return response()->json(['error' => 'Could not create token'], 500);
         }
     }
 
+    /**
+     * Get current user profile
+     * GET /api/users/profile
+     */
     public function profile()
     {
         try {
@@ -57,6 +77,10 @@ class AuthController extends Controller
         return response()->json(['user' => $user]);
     }
 
+    /**
+     * Update current user profile
+     * PUT /api/users/profile
+     */
     public function update(UserUpdateRequest $request)
     {
         $validatedData = $request->validated();
@@ -71,6 +95,10 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
+    /**
+     * Refresh token
+     * GET /api/users/refresh
+     */
     public function refresh()
     {
         return $this->respondWithToken(auth('api')->refresh());
@@ -85,13 +113,21 @@ class AuthController extends Controller
         ], $statusCode);
     }
 
+    /**
+     * Sign out
+     * DELETE /api/auth/sign_out
+     */
     public function logout(Request $request)
     {
         auth('api')->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Signed out successfully']);
     }
 
+    /**
+     * Delete current user
+     * DELETE /api/users/profile
+     */
     public function destroy(Request $request)
     {
         $user = auth('api')->user();
